@@ -1,0 +1,121 @@
+////////// 		NOTES		//////////
+
+Factory Pattern vs Builder Pattern
+
+Factory Pattern: best for dealing with a group of related but independent objects. 
+	Continent: Africa -> Factory for building African animals makes independent Lion, Giraffe, Elephant objects.
+
+Builder Pattern: best for customizing a single object with different characterisitics. 
+	Continent: Africa -> Builder for creating a single lion: male or female? docile or aggressive? small or big?
+	
+And you can definitely see how these two could be used together. The Factory Pattern is used to pick which animal
+to create and then calls a particular builder pattern to instantiate that type of animal object with its necessary
+customizations.
+
+***The BUILDER PATTERN creates and customizes one object type, and provides control over the order of customizations.*** 
+The customizations yield objects with different attributes.
+	Like a pizza is one object with customizations for toppings, cheese, sauce, and crust.	
+	
+
+Below are two different approaches to implementing the Builder Pattern. Both build the same object, a Story object, 
+so direct comparisons between implementations is easier to grasp. Primarily, one uses an interface and
+the other uses an abstract class for their "Builder". Both have nearly identical "ConcreteBuilders" except for
+the constructors. Their "Directors" differ a bit. Their "Clients" both build "ConcreteBuilders" and "Directors"
+but one is more decoupled than the other.
+
+There are some non-builder pattern differences between the code as well. For instance, I prefer the toString
+implementation of .builderPattern1 rather than how .builderPattern2 makes the client use a bunch of method calls.
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+		com.studtman.builderPattern1	
+		modeled after tutorial: http://www.javacamp.org/designPattern
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+This package is a Builder Pattern that customizes a Story object.
+
+The "product" is a Story object.
+
+The "builder" is an abstract class. (StoryBuilder abstract class)
+The "builder" creates a Product object. (StoryBuilder has-a Story object).
+The "builder" has method stubs that all "concrete builders" must implement.
+
+The "concrete builder" extends the abstract class. (ScaryStoryBuilder extends StoryBuilder)
+The "concrete builder" has access to the "builder's" protected Story object. (ScaryStoryBuilder is-a StoryBuilder)
+The "concrete builder" implements the "builder's" methods for customizing a Story object.
+
+The "director" uses a default, no-arg constructor that is not explicitly defined.
+The "director" has one method: putStoryTogether() that determines method call order in the "concrete builder."
+The "director's" method receives a "concrete builder" object that is cast as a "builder" type.
+The "director" invokes method calls on the "concrete object".
+
+The "client" creates "concrete builder" objects cast as "builder" types.
+The "client" creates a "director."
+The "client" invokes "director's" putStoryTogether() method passing the "concrete builder" as an argument.
+The "client" uses the "concrete builder" that is cast as a "builder" type. (StoryDirector prints Story details)
+
+	Builder builder = new ConcreteBuilder();
+	Director director = new Director();	
+	director.putStoryTogether(builder);	
+	print(builder.getStoryInfo());
+
+	All the client knows is it asks for a particular concrete builder,
+		then creates a universal director that accepts any concrete builder (cast as builder),
+		then passes the concrete builder to the director.
+	Now methods are called on the builder to access the Product.
+	
+	...this means the client doesn't have direct access to the Product, it is forced to work
+	through the builder and in this way the client is assured that all builder objects will
+	have the same functionality. I might like this for short lived products that don't have a lot of 
+	behavior (methods). But say, if I were customizing a game character, I might want the product
+	to outlive the builder (but you could save the builder which houses the Product via composition).
+	
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+		com.studtman.builderPattern2	
+		modeled after tutorial: http://www.newthinktank.com/2012/09/builder-design-pattern-tutorial/
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+This package is a Builder Pattern that customizes a Story object.
+
+The "product" is a Story object.
+
+The "builder" is an interface. (StoryBuilder interface)
+The "builder" has method stubs that all "concrete builders" must implement.
+
+The "concrete builder" implements the interface. (ScaryStoryBuilder implements StoryBuilder)
+The "concrete builder" constructor creates a new Product object. (ScaryStoryBuilder has-a Story object).
+The "concrete builder" "getProduct()" method returns the Product. (getProduct() returns the Story object).
+
+The "director" receives a "builder" type in it's constructor & sets private builder field.
+The "director" has a putStoryTogether() method that invokes private field's methods. (interface methods).
+The "director" has a getStory() method that invokes the private field's getProduct() method (an interface method).
+
+The "client" creates a "concrete builder" cast as a "builder," then passes that to the "director" constructor.
+The "client" instructs the "director" to assemble and obtain the "product" which is cast as a "product" object.
+
+	Builder builder = new ConcreteBuilder();
+	Director director = new Director(builder);	
+	director.putStoryTogether();	
+	Product product = director.getStory();	
+	print(product.getMethods());
+
+	All the client knows is it asks for a particular concrete builder, 
+		then creates a universal director by sending it the concrete builder cast as builder,
+		then asks the director to put it together,
+		and then asks the director to return the freshly minted product.
+	Product methods are then invoked.
+	
+	...in this case the client does get direct access to the Product. Now the Product can outlive its
+	concrete builder, it can be saved independently. Maybe I would prefer this approach for any
+	long-lived Products or a product with many behaviors? I'm not sure, though; seems just as easy to
+	decouple the client from the Product and have the client use whatever is common to all Products via 
+	the Builder; there would need to be a compelling reason for why the client would need hooks into
+	the actual Product itself, and since the product itself is generic prior to modifications (as it is supposed
+	to be) then why would a client need hooks directly into the Product? I don't have an immediate answer.
+	Given that argument I'll choose at this time to prefer .builderPattern1's approach.
+	
+	

@@ -1,0 +1,108 @@
+This code is abstracted from the following tutorial: 
+		http://www.newthinktank.com/2013/01/code-refactoring-9/
+
+I want you to imagine taking a jar out of grandma's cupboard, one of her pickling jars,
+set that on the ground. Now make it huge. Huger. Like four feet in diameter huge. Now
+you have a jar big enough that should you want to you can put smaller jars inside it.
+This program essentially makes two things: jars and the things that go inside them.
+The jars are just containers and we'll take a permanent marker and label them
+as we see fit. But jars are just jars, they exist to hold stuff, and it is this stuff
+that we are most interested in. 
+
+If a kid gave you a 500lb bag of Halloween candy and wanted you to sort it you could label
+one jar "icky candy" and the other "good candy" and place those two jars inside the giant 
+jar which you clould label "Halloween Candy." Into the jars you would put the M&M's, Skittles,
+Mars, Almond Joy, Mounds, Skors and Heath bars as you saw fit. 
+
+Back to programming speak. The jars are objects, sure, but they're for organizing the objects
+we're really interested in, the candies. In the Composite Pattern that which is common to both
+jars and candies is the "Component", there should be a method in here that when recursively
+called will perform actions on Jars and Candies; sometimes the toString() method is used by some
+tutorials to deliver this effect (since all objects inherit from Object which has a toString()
+method). An actual jar is the "Composite," composite because it can have either other jars
+inside it or the actual objects in which we are interested (Candies, which are called "Leaf" objects).
+
+The jars are Composites, the candies are Leaf objects. Said another way, the objects in the
+composition can be jars and candies. Candies are always found within a jar. The candies within
+a jar are leafs ("leaves" is better grammar, but, eh), if the jar contains a jar inside it the
+inside jar is a childJar, if the jar contains two jars inside it then the two childJars are
+siblings.
+
+The Composite Pattern is a way to create a tiered effect with objects.
+	Jars can contain jars & candies;
+	Folders contain Folders & Files; 
+	ProductCategories contain Categories & Products;
+	ComplexShapes contain Shapes & Lines;
+	EmployeesCategories contain Managers, Managers contain Managers & Workers;
+	etc.
+
+For example a grocery store has categories (dairy, cereal, produce, etc.) and
+	within them are products (milk, chese, yogurt, etc.):
+
+		ProductCategories
+			Dairy
+				Milk
+				Cheese
+				etc.
+			Cereal
+				Cheerios
+				Shredded Wheat
+				etc.
+			Produce
+				Vegetables
+					Carrots
+					Onions
+					etc.
+				Fruits
+					Apple
+					Orange
+					etc.
+
+	Or, Entertainment / Videos / DVD, BluRay, etc.
+	Or, Employee / Manager / WorkerType1, WorkerType2, etc.
+
+	Or, like this tutorial: http://www.oodesign.com/composite-pattern-shapes-example-java-sourcecode.html
+		ComplexShape / Rectangle, Ellipse / Lines
+
+Basic Key to understanding this pattern:
+
+	Wikipedia: http://en.wikipedia.org/wiki/Composite_pattern
+		Wiki lists the following parts to this pattern:
+			[ ] Component -- the Interface or Abstract Class (ie, the abstraction)
+			[ ] Composite -- holds a List of Component types.
+			[ ] Leafs -- the items that are held by Composites.
+
+			Examples:
+			[ ] Component: SuperClass; 	Employee; 			ProductCategories; 					Shape; etc.
+			[ ] Composite: Node; 		Manager; 			Dairy, Produce; 					Rectangle, Ellipse; etc.
+			[ ] Leafs: 	   Leaf; 		Waiter, Bartender; 	Yogurt, Cheese; Lettuce, Carrot; 	Line; etc.
+
+	In my code example I have generically named each part SuperClass, Node and Leaf.
+
+	The Composite Pattern is basically nesting hierarchical classes that share a 
+	common type within a List. The list holds objects of the Interface or Abstract Class type.
+
+Dynamic Binding: 
+	Composite Design Pattern as shown here uses dynamic binding. Dynamic binding is the JVM deciding
+	which method to call when two or more methods with the same signature & return type exist within an
+	inheritance chain. The JVM decides which overridden method to call dynamically, at runtime, and 
+	that is dynamic binding.
+
+Keys to understanding this code:
+	A subclass cast as a superclass can only use the methods available to the superclass. 
+	This is why the "add" method is included in the "SuperClass" but has no implementation.
+	The JVM's dynamic binding looks for matching method signatures from children -> parent. 
+
+	An ArrayList is created inside each Node object. If the ArrayList holds other Node objects
+	then, basically, the first ArrayList contains nested ArrayLists. 
+ 
+	Both Node and Leaf objects have common methods (as described in the Interface or Abstract Class).
+	The concrete implementation of these methods perform different tasks in Nodes & Leafs. 
+	In Nodes the method is (primarily) accessing the List and recursively calling the method on each
+	object (Nodes or Leafs) in the List. This recursive call results in the same method being called on
+	Leafs and Nodes. 
+
+	You can think of the implementation of the abstract method that is shared
+	by Node & Leaf objects like this: the Node implementation is for traversal of
+	the ArrayLists; the Leaf implementation is for accessing the objects we're really
+	interested in.

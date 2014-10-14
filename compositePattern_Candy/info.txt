@@ -1,0 +1,116 @@
+This code is abstracted from the following tutorial: 
+		http://www.newthinktank.com/2013/01/code-refactoring-9/
+
+Composite Pattern In Plain English
+
+	Imagine taking a jar out of grandma's cupboard, one of her pickling jars,
+	set that on the ground. Now make it huge. Huger. Like four feet in diameter huge. Now
+	you have a jar big enough that should you want to you can put smaller jars inside it.
+
+	This program essentially makes two things: jars and the things that go inside them.
+	Jars are simply containers for holding stuff; and if we organize the jars then we can
+	organize the things that go in them. 
+
+	If a kid gave you a 500lb bag of Halloween candy and wanted you to sort it you could label the
+	huge jar "Halloween Candy" and label two other jars, "icky candy" and "good candy", and place 
+	these inside the huge jar. Into the two sorting jars you would put the M&M's, Skittles,
+	Mars, Almond Joy, Mounds, Skors and Heath bars, etc., as you saw fit. 
+
+	Back to programming speak. The jars are objects, sure, but they're for organizing the objects
+	we're really interested in, the candies. Like your computer's folders are simply containers for
+	holding the files that go inside them. 
+
+The Composite Pattern: Component + Composite + Leaf
+
+	The Component is an abstraction of things common to Jars and Candy. There should be a method
+	in the Component that when recursively called performs actions on Jars and Candy. I have seen the 
+	toString() method used by some tutorials to deliver this effect - all objects inherit from Object
+	thus have the common method toString(). 
+
+	The Composite is a composition of Jars and Candy objects. A Jar can have other Jars and/or Candy
+	inside it. 
+
+	The Leaf is a Candy object. Candy objects are always found within a Jar. 
+	Leaves do not contain Jars, leaves don't contain composites.
+	
+
+The Composite Pattern Is A Way To Create A Tiered Effect With Objects:
+
+	Jars can contain jars & candies;
+	Folders contain Folders & Files; 
+	ProductCategories contain Categories & Products;
+	ComplexShapes contain Shapes & Lines;
+	EmployeesCategories contain Managers, Managers contain Managers & Workers;
+	etc.
+
+	For example, a grocery store has categories (dairy, cereal, produce, etc.) and
+	within them are products (milk, cheese, yogurt, etc.):
+
+		ProductCategories
+			Dairy
+				Milk
+				Cheese
+				etc.
+			Cereal
+				Cheerios
+				Shredded Wheat
+				etc.
+			Produce
+				Vegetables
+					Carrots
+					Onions
+					etc.
+				Fruits
+					Apple
+					Orange
+					etc.
+
+	Or, Entertainment / Videos / DVD, BluRay, etc.
+	Or, Employee / Manager / WorkerType1, WorkerType2, etc.
+
+	Or, like this tutorial: http://www.oodesign.com/composite-pattern-shapes-example-java-sourcecode.html
+		ComplexShape / Rectangle, Ellipse / Lines
+
+Basic Key to understanding this pattern:
+
+		(Wikipedia: http://en.wikipedia.org/wiki/Composite_pattern)
+	
+		Wiki lists the following parts to this pattern:
+		
+			[ ] Component -- the Interface or Abstract Class (ie, the abstraction)
+			[ ] Composite -- holds a List of Component types.
+			[ ] Leafs -- the items that are held by Composites.
+
+			Examples:
+			 - Component: SuperClass; 	Employee; 			ProductCategories; 					Shape; 
+			 - Composite: Node; 		Manager; 			Dairy, Produce; 					Rectangle, Ellipse;
+			 - Leafs: 	  Leaf; 		Waiter, Bartender; 	Yogurt, Cheese; Lettuce, Carrot; 	Line;
+
+
+Dynamic Binding: 
+	When a method with the same signature and return type exists within an inheritance chain the JVM
+	decides which overridden method to call dynamically, at runtime. 
+
+Keys to understanding this code:
+	A subclass cast as a superclass can only use the methods available to the superclass. 
+	This code uses an Interface for the Component, this is why the Leaf (Candy in the code) has included the "add"
+	method but has no implementation. This code could have used an Abstract Class for the 
+	Component and if it had then the "add" method would be included within the abstract class but 
+	would have no implementation; the Leaf would not have to explicitly implement the method at all; only
+	the Composite (Jar in the code) would explicitly define the method block.
+	
+	The JVM's dynamic binding looks for matching method signatures from children -> parent. 
+
+	An ArrayList is created inside each Jar object. If the ArrayList holds other Jar objects
+	then, basically, the first ArrayList contains nested ArrayLists. 
+ 
+	Both Jar and Candy objects have a common method (as described in the Interface or Abstract Class)
+	that performs different tasks in Jars & Candy. In Jars the method is (primarily) accessing the List
+	and recursively calling the method on each object (Jar or Candy) in the List. In a Leaf the method
+	does whatever we want it to do, like accessing instance fields; what it doesn't need to do: recurse,
+	because there are no Jars (composites) within a Candy (leaf).
+
+	You can think of the implementation of the Interface method that is shared
+	by Jars & Candy objects like this: the Jar implementation is for traversal of
+	the ArrayLists; the Candy implementation is for accessing the objects we're really
+	interested in.
